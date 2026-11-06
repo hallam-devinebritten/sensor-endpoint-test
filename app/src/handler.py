@@ -1,8 +1,15 @@
 import json
+import logging
 import os
 
 APP_ENV = os.environ.get("APP_ENV", "local")
 APP_VERSION = os.environ.get("APP_VERSION", "dev")
+
+LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
+
+logging.basicConfig()
+logger = logging.getLogger()
+logger.setLevel(LOG_LEVEL)
 
 MOCK_SENSOR_DATA = [
     {"id": 1, "name": "C02 Sensor", "C02 Concentration": 612, "Unit": "ppm"},
@@ -34,7 +41,16 @@ ROUTES = {
 
 def lambda_handler(event, context):
     route_key = event.get("routeKey", "")
+    request_id = getattr(context, "aws_request_id", "local")
+
+    logger.info(json.dumps({"route": route_key, "request_id": request_id, "env": APP_ENV}))
+
     route = ROUTES.get(route_key)
     if route is None:
         return _response(404, {"error": "not found"})
-    return route(event)
+    
+    try:
+        return route(event)
+    except Exception:
+        logger.exception("unhandled error, request_id=%s", request_id)
+        return _response(500, {"error": "internal server error"})
