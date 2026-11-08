@@ -16,3 +16,10 @@ variable "github_repo" {
   description = "GitHub repository name"
   type        = string
 }
+
+
+variable "enviroments" {
+  description = "Enviroments that get their own deploy role"
+  type        = set(string)
+  default     = ["dev", "prod"]
+}
