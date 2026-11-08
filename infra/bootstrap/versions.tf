@@ -9,10 +9,10 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "sensor-endpoints-tfstate-650622040012"
-    key = "bootstrap/terraform.tfstate"
-    region = "eu-west-2"
+    bucket       = "sensor-endpoints-tfstate-650622040012"
+    key          = "bootstrap/terraform.tfstate"
+    region       = "eu-west-2"
     use_lockfile = true
-    encrypt = true
+    encrypt      = true
   }
 }
