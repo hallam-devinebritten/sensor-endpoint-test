@@ -15,5 +15,6 @@ updates:
       - "/infra/bootstrap"
       - "/infra/envs/dev"
       - "/infra/envs/prod"
+      - "/infra/modules/api"
     schedule:
       interval: "weekly"
