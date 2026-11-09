@@ -1,1 +1,1 @@
-github_repo = "hallam-devinebritten/sensor-endpoint-test"
+github_repo = "hallam-devinebritten@352835090/sensor-endpoint-test@1448523285"
