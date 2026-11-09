@@ -43,7 +43,7 @@ flowchart LR
 
 API Gateway is the front door. It gives the API its URL and only lets in the two routes I've set up. Try `/admin` or `/anything-else` and it's turned away at the door with a 404, without my code ever waking up.
 
-If access one of the allowed Routes, Lambda runs the Python, sends back some JSON and writes a log line.
+If accessing one of the allowed Routes, Lambda runs the Python, sends back some JSON and writes a log line.
 
 There are no servers to look after and nothing running when nobody's using it, so it costs next to nothing. There's also no VPC: the API doesn't talk to a database or anything private, so there's nothing to hide behind one. If it ever needed a database, that's something I would change.
 
@@ -70,7 +70,7 @@ pytest -v                  # run the tests
 py app\local_server.py     # then open http://localhost:8000/health
 ```
 
-The local server pretends to be API Gateway, so you can poke the real handler in your browser before anything goes near AWS.
+The local server pretends to be API Gateway, so you can reach the real handler in your browser before anything goes near AWS.
 
 ## Dev and prod
 
@@ -85,6 +85,8 @@ Both environments are built from the same **Terraform** code. The only thing tha
 Each environment also has its own Terraform state and its own AWS role, so dev can't touch prod, even by accident.
 
 One thing I did on purpose: those settings have **no defaults**. If someone forgets to set one for prod, Terraform stops and complains rather than quietly using a value that was meant for dev.
+
+The log level is also checked. If someone types `"debgu"` in a settings file, the pull request fails before anything is deployed. And if a bad value ever sneaks in some other way, the app falls back to `INFO` instead of falling over.
 
 ## From local to production
 
@@ -106,10 +108,31 @@ flowchart LR
 - Nothing gets into `main` without a pull request and passing checks, and that includes me.
 - Only one deploy runs at a time.
 - Terraform locks its state, so two runs can't trip over each other.
+- Changes that only touch documentation (like this README) don't trigger a deploy.
 
 **If something goes wrong,** I revert the commit and the pipeline puts the previous version back, through exactly the same steps.
 
 ## Keeping it secure
+
+```mermaid
+flowchart LR
+    internet([The internet])
+    github([GitHub Actions])
+
+    subgraph aws["AWS"]
+        apigw["API Gateway<br/>the only public way in"]
+        lambda["Lambda<br/>no inbound access at all"]
+        sts["AWS login service (STS)<br/>checks GitHub's token"]
+        roles["Deploy roles<br/>one for dev, one for prod"]
+    end
+
+    internet -- "only GET /health and /sensor-data" --> apigw
+    apigw -- "only this API can call it" --> lambda
+    github -- "short-lived signed token" --> sts
+    sts -- "only this repo + the right environment" --> roles
+```
+
+There are only two ways into this AWS account: the public API (which only accepts two routes) and the pipeline (which needs a valid token from this exact repo and environment). Everything else is closed.
 
 - **No passwords or keys stored anywhere.** GitHub proves who it is to AWS with a short-lived token (OIDC) and gets temporary access that expires within an hour. There's nothing to leak.
 - **AWS only trusts this exact repo**, and only for the right environment. The prod role only opens for a deploy that's been approved.
@@ -140,7 +163,8 @@ Honestly, this was the most educational part:
 - **My tests passed everywhere except the pipeline.** A file I needed had never been committed. It only existed on my machine, which is exactly why you run tests on a clean machine.
 - **AWS kept saying "not authorised".** Three times. First my rule was checking the wrong thing (a branch instead of an environment). Then it turned out GitHub includes ID numbers for the repo and owner in its token, not just names. Once I printed out what GitHub was actually sending, it was obvious.
 - **Prod didn't wait for my approval.** I'd forgotten to add myself as the reviewer. Lesson: test that your safety checks actually stop you.
-- **Dependabot opened several PRs at once and they tripped over each other** Trying to add addition features I opened up another error. Dependabot tried to open multiple PR's at the same time. The lock did its job, and now runs wait their turn instead of failing.
+- **Dependabot opened several PRs at once and they tripped over each other** Trying to add additional features I opened up another error. Dependabot tried to open multiple PR's at the same time. The lock did its job, and now runs wait their turn instead of failing.
+- **My stronger test caught a bug the moment I wrote it.** One sensor reading said `Unit` instead of `unit`. The old test would never have noticed.
 
 ## If I had more time
 
@@ -149,6 +173,8 @@ Honestly, this was the most educational part:
 - **A firewall (WAF) and some login** in front of the API.
 - **Put the GitHub settings in Terraform too**, so things like the prod reviewer can't be forgotten again.
 - **Tidy up the pipeline**, so dev and prod share one set of steps instead of two copies.
+- **A read-only role for pull requests.** At the moment, the plan that runs on a PR uses the same dev role as a real deploy, so in a team, code that hasn't been reviewed could change dev. A separate read-only role would close that gap.
+- **Tighter storage for Terraform's state:** only allow HTTPS connections to the bucket, and automatically clear out old versions of the state after a while.
 
 ## Setting it up from scratch
 
