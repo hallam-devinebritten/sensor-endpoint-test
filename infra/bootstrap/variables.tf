@@ -13,7 +13,7 @@ variable "project" {
 
 
 variable "github_repo" {
-  description = "GitHub repository name"
+  description = "GitHub repository name - owner@owner_id/repo@repo_id"
   type        = string
 }
 

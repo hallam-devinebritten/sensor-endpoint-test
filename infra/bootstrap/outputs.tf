@@ -4,6 +4,6 @@ output "state_bucket_name" {
 }
 
 output "deploy_role_arns" {
-  description = "IAM roles for GitHub Actions to assume, per enviroment"
+  description = "IAM roles for GitHub Actions to assume, per environment"
   value       = { for env, role in aws_iam_role.deploy : env => role.arn }
 }
