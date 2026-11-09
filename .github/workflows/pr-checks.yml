@@ -56,6 +56,16 @@ jobs:
       - name: Check Terraform formatting
         run: terraform fmt -check -recursive ../..
 
+      - name: Show OIDC token claims (temporary debug)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const token = await core.getIDToken('sts.amazonaws.com');
+            const claims = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
+            core.info(`sub: ${claims.sub}`);
+            core.info(`aud: ${claims.aud}`);
+
+
       - name: Get temporary AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -76,5 +86,5 @@ jobs:
         run: |
           echo '### Terraform plan (dev)' >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
-          cat plan.txt >> "$GITHUB_STEP_SUMMARY"
+          if [ -f plan.txt ]; then cat plan.txt; else echo "No plan was produced - see the failed step above."; fi >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
