@@ -16,7 +16,7 @@ jobs:
     name: Test and build package
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-python@v7
         with:
@@ -51,7 +51,7 @@ jobs:
         shell: bash
         working-directory: infra/envs/dev
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Get the package built earlier
         uses: actions/download-artifact@v8
@@ -106,7 +106,7 @@ jobs:
         shell: bash
         working-directory: infra/envs/prod
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Get the SAME package that went to dev
         uses: actions/download-artifact@v8
