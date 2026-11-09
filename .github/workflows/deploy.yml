@@ -74,10 +74,10 @@ jobs:
         run: terraform init -input=false
 
       - name: Terraform plan
-        run: terraform plan -input=false -no-color -lock-timeout=5m -var="app_version=${{ github.sha }}" | tee plan.txt
+        run: terraform plan -input=false -lock-timeout=5m -out=tfplan -var="app_version=${{ github.sha }}"
 
       - name: Terraform apply (exactly the saved plan)
-        run: terraform apply -input=false tfplan
+        run: terraform apply -input=false -lock-timeout=5m tfplan
 
       - name: Smoke test
         run: |
@@ -129,10 +129,10 @@ jobs:
         run: terraform init -input=false
 
       - name: Terraform plan
-        run: terraform plan -input=false -out=tfplan -var="app_version=${{ github.sha }}"
+        run: terraform plan -input=false -lock-timeout=5m -out=tfplan -var="app_version=${{ github.sha }}"
 
       - name: Terraform apply (exactly the saved plan)
-        run: terraform apply -input=false tfplan
+        run: terraform apply -input=false -lock-timeout=5m tfplan
 
       - name: Smoke test
         run: |
