@@ -25,8 +25,8 @@ variable "log_level" {
   default     = "INFO"
 
   validation {
-    condition     = contains(["DEBUG", "INFO", "WARNING", "ERROR"], var.log_level)
-    error_message = "log_level must be one of: DEBUG, INFO, WARNING, or ERROR"
+    condition     = contains(["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], var.log_level)
+    error_message = "log_level must be one of: DEBUG, INFO, WARNING, ERROR, or CRITICAL"
   }
 }
 
