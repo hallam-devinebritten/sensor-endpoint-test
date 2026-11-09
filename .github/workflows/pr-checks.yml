@@ -69,7 +69,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform plan
-        run: terraform plan -input=false -no-color -var="app_version=${{ github.sha }}" | tee plan.txt
+        run: terraform plan -input=false -no-color -lock-timeout=5m -var="app_version=${{ github.sha }}" | tee plan.txt
 
       - name: Show plan in the run summary
         if: always()
