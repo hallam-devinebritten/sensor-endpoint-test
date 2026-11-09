@@ -5,7 +5,9 @@ import os
 APP_ENV = os.environ.get("APP_ENV", "local")
 APP_VERSION = os.environ.get("APP_VERSION", "dev")
 
-LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
+LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
+if LOG_LEVEL not in ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"):
+    LOG_LEVEL = "INFO"
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
