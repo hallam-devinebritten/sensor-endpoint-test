@@ -18,8 +18,8 @@ variable "github_repo" {
 }
 
 
-variable "enviroments" {
-  description = "Enviroments that get their own deploy role"
+variable "environments" {
+  description = "Environments that get their own deploy role"
   type        = set(string)
   default     = ["dev", "prod"]
 }

@@ -11,7 +11,7 @@ The API will have two endpoints:
 
 ## Running Locally
 ## Architecture
-## Enviroments
+## Environments
 ## Deployment
 ## Security
 ## Decisions and Tradeoffs

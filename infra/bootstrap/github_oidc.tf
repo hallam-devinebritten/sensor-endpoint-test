@@ -5,7 +5,7 @@ resource "aws_iam_openid_connect_provider" "github" {
 
 
 data "aws_iam_policy_document" "github_trust" {
-  for_each = var.enviroments
+  for_each = var.environments
 
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
@@ -30,7 +30,7 @@ data "aws_iam_policy_document" "github_trust" {
 }
 
 resource "aws_iam_role" "deploy" {
-  for_each = var.enviroments
+  for_each = var.environments
 
   name                 = "${var.project}-${each.key}-deploy"
   description          = "Assumed by GitHub Actions to deploy to ${each.key} enviroment"
