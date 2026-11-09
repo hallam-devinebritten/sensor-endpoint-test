@@ -9,7 +9,7 @@ permissions:
 
 concurrency:
   group: pr-checks-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   test:
@@ -52,6 +52,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v4
         with:
           terraform_version: "~1.15"
+          terraform_wrapper: false
 
       - name: Check Terraform formatting
         run: terraform fmt -check -recursive ../..
