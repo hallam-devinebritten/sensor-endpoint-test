@@ -8,12 +8,12 @@ APP_VERSION = os.environ.get("APP_VERSION", "dev")
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
 
 logging.basicConfig()
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 logger.setLevel(LOG_LEVEL)
 
 MOCK_SENSOR_DATA = [
-    {"id": 1, "name": "C02 Sensor", "C02 Concentration": 612, "Unit": "ppm"},
-    {"id": 2, "name": "Temperature Sensor", "Temperature": 22.5, "Unit": "C"},
+    {"id": 1, "name": "C02 Sensor", "type": "co2", "value": 612, "unit": "ppm"},
+    {"id": 2, "name": "Temperature Sensor", "type": "temperature", "value": 22.5, "unit": "C"},
 ]
 
 
@@ -48,7 +48,6 @@ def lambda_handler(event, context):
     route = ROUTES.get(route_key)
     if route is None:
         return _response(404, {"error": "not found"})
-    
     try:
         return route(event)
     except Exception:
