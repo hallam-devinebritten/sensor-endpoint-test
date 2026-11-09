@@ -23,6 +23,11 @@ variable "log_level" {
   description = "Python log level"
   type        = string
   default     = "INFO"
+
+  validation {
+    condition     = contains(["DEBUG", "INFO", "WARNING", "ERROR"], var.log_level)
+    error_message = "log_level must be one of: DEBUG, INFO, WARNING, or ERROR"
+  }
 }
 
 variable "memory_mb" {

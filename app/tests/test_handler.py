@@ -18,10 +18,12 @@ def test_health_returns_ok():
     assert body["status"] == "ok"
 
 
-def test_items_returns_mock_data():
+def test_sensor_data_returns_readings():
     status, body = call("GET /sensor-data")
     assert status == 200
-    assert body["count"] == len(body["sensordata"])
+    assert body["count"] == len(body["sensordata"]) > 0
+    for reading in body["sensordata"]:
+        assert {"id", "name", "type", "value", "unit"} <= reading.keys()
 
 
 def test_unknown_route_returns_404():
