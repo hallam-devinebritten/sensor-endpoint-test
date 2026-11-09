@@ -19,7 +19,7 @@ data "aws_iam_policy_document" "deploy_state_access" {
 resource "aws_iam_role_policy" "deploy_state_access" {
   for_each = var.enviroments
 
-  name = "terraform-state-access"
-  role = aws_iam_role.deploy[each.key].id
+  name   = "terraform-state-access"
+  role   = aws_iam_role.deploy[each.key].id
   policy = data.aws_iam_policy_document.deploy_state_access[each.key].json
 }

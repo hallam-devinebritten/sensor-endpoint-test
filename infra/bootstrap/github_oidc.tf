@@ -11,7 +11,7 @@ data "aws_iam_policy_document" "github_trust" {
     actions = ["sts:AssumeRoleWithWebIdentity"]
 
     principals {
-      type         = "Federated"
+      type        = "Federated"
       identifiers = [aws_iam_openid_connect_provider.github.arn]
     }
 
