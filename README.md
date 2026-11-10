@@ -163,7 +163,7 @@ Honestly, this was the most educational part:
 - **My tests passed everywhere except the pipeline.** A file I needed had never been committed. It only existed on my machine, which is exactly why you run tests on a clean machine.
 - **AWS kept saying "not authorised".** Three times. First my rule was checking the wrong thing (a branch instead of an environment). Then it turned out GitHub includes ID numbers for the repo and owner in its token, not just names. Once I printed out what GitHub was actually sending, it was obvious.
 - **Prod didn't wait for my approval.** I'd forgotten to add myself as the reviewer. Lesson: test that your safety checks actually stop you.
-- **Dependabot opened several PRs at once and they tripped over each other** Trying to add additional features I opened up another error. Dependabot tried to open multiple PR's at the same time. The lock did its job, and now runs wait their turn instead of failing.
+- **Dependabot opened several PRs at once and they tripped over each other.** Trying to add additional features I opened up another error. The lock did its job, and now runs 'wait their turn' instead of failing.
 - **My stronger test caught a bug the moment I wrote it.** One sensor reading said `Unit` instead of `unit`. The old test would never have noticed.
 
 ## If I had more time
